@@ -1,7 +1,13 @@
 void solve()
 {
-    for(int i=n;i>1;i/=2)
+    for(int i=0;i<n;i++)
     {
-        sort(v.begin(),v.end());
+        for(int j=n;j>1;j/=2)
+        {
+            sort(
+                v.begin(),
+                v.end()
+            );
+        }
     }
 }

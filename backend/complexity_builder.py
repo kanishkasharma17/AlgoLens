@@ -108,12 +108,12 @@ def analyze_node(node):
         or "* 2" in update_text
     ):
                 is_log_loop = True
-                if is_log_loop:
+        if is_log_loop:
                     loop_cost = make_complexity(
         n_power=0,
         log_power=1
     )
-                else:
+        else:
                     loop_cost = make_complexity(
             n_power=1,
             log_power=0
