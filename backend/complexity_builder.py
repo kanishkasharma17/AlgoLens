@@ -31,6 +31,18 @@ def called_function_name(node):
 
     return None
 
+def get_update_expression(for_node):
+
+    for child in for_node.children:
+
+        if (
+            child.type == "update_expression"
+            or child.type == "assignment_expression"
+        ):
+            return child
+
+    return None
+
 def analyze_node(node):
 
     # ------------------
@@ -83,8 +95,26 @@ def analyze_node(node):
     # ------------------
 
     if node.type == "for_statement":
-
-        loop_cost = make_complexity(
+        update_node = get_update_expression(node)
+        is_log_loop = False
+        if update_node:
+            update_text = update_node.text.decode("utf8")
+            if (
+        "/=2" in update_text
+        or "/= 2" in update_text
+        or "*=2" in update_text
+        or "*= 2" in update_text
+        or "/ 2" in update_text
+        or "* 2" in update_text
+    ):
+                is_log_loop = True
+                if is_log_loop:
+                    loop_cost = make_complexity(
+        n_power=0,
+        log_power=1
+    )
+                else:
+                    loop_cost = make_complexity(
             n_power=1,
             log_power=0
         )
