@@ -1,12 +1,8 @@
-void helper()
+void fib(int n)
 {
-    for(int i=0;i<n;i++)
-    {
-        sort(v.begin(),v.end());
-    }
-}
+    if(n <= 1)
+        return;
 
-void solve()
-{
-    helper();
+    fib(n - 1);
+    fib(n - 2);
 }

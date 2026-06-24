@@ -3,6 +3,9 @@ from call_graph import(
     build_call_graph,
     recursive_functions
 )
+from analyzers.recursion_analyzer import(
+    classify_recursion
+)
 # STL MAP
 STL_FUNCTIONS = {
     "sort": "sort_calls",
@@ -26,9 +29,6 @@ def extract_features(code):
     recursive_function_names = (
         recursive_functions(graph)
     )
-    print("\nGRAPH =", graph)
-    print("RECURSIVE FUNCTIONS =", recursive_function_names)
-
     features = {
         "for_loops": 0,
         "while_loops": 0,
@@ -43,8 +43,30 @@ def extract_features(code):
         "upper_bound_calls": 0,
         "linear_bounds": 0,
         "constant_bounds": 0,
-        "logarithmic_loops":0
+        "logarithmic_loops":0,
+        "linear_recursive_functions":0,
+        "binary_recursive_functions":0
     }
+    from function_analyzer import collect_functions
+
+    functions = collect_functions(root)
+
+    for name in recursive_function_names:
+
+        recursion_type = classify_recursion(
+        functions[name],
+        name
+    )
+
+        if recursion_type == "LINEAR":
+            features["linear_recursive_functions"] += 1
+
+        elif recursion_type == "BINARY":
+            features["binary_recursive_functions"] += 1
+    print("\nGRAPH =", graph)
+    print("RECURSIVE FUNCTIONS =", recursive_function_names)
+
+    
 
     
 
