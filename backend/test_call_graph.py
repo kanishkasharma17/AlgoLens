@@ -3,7 +3,8 @@ from pathlib import Path
 from parser import parse_cpp
 from call_graph import (
     build_call_graph,
-    has_cycle
+    has_cycle,
+    recursive_functions
 )
 
 BASE_DIR = Path(__file__).parent
@@ -31,3 +32,7 @@ print(
     "RECURSION DETECTED:",
     has_cycle(graph)
 )
+print()
+print("RECURSIVE FUNCTIONS:",
+    recursive_functions(graph))
+

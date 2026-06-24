@@ -1,8 +1,6 @@
-void helper()
-{
+void A(){
+    B();
 }
-
-void solve()
-{
-    helper();
+void B(){
+    A();
 }

@@ -1,5 +1,8 @@
 from parser import parse_cpp
-
+from call_graph import(
+    build_call_graph,
+    recursive_functions
+)
 # STL MAP
 STL_FUNCTIONS = {
     "sort": "sort_calls",
@@ -18,6 +21,13 @@ LOOP_TYPES = {
 def extract_features(code):
 
     root = parse_cpp(code)
+    graph = build_call_graph(root)
+
+    recursive_function_names = (
+        recursive_functions(graph)
+    )
+    print("\nGRAPH =", graph)
+    print("RECURSIVE FUNCTIONS =", recursive_function_names)
 
     features = {
         "for_loops": 0,
@@ -36,7 +46,7 @@ def extract_features(code):
         "logarithmic_loops":0
     }
 
-    recursive_function_names = set()
+    
 
     def node_text(node):
         return code[
@@ -105,12 +115,7 @@ def extract_features(code):
             called = called_function_name(node)
             
             # recursion detection
-            if (
-                current_function
-                and called == current_function
-            ):
-                features["recursive_calls"] += 1
-                recursive_function_names.add(current_function)
+            
 
             # STL detection
             if called in STL_FUNCTIONS:
@@ -177,6 +182,16 @@ def extract_features(code):
     features["recursive_functions"] = len(
         recursive_function_names
     )
+    recursive_call_count = 0
+    for func in recursive_function_names:
+
+        recursive_call_count += len(
+        graph[func]
+    )
+
+    features["recursive_calls"] = (
+    recursive_call_count
+)
 
     features["total_loops"] = (
         features["for_loops"]
