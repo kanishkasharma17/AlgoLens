@@ -3,6 +3,7 @@ from extractor import extract_features
 from parser import parse_cpp
 from complexity_builder import analyze_node
 from complex_utils import complexity_to_string
+from function_analyzer import build_function_table
 
 BASE_DIR = Path(__file__).parent
 
@@ -14,7 +15,12 @@ with open(cpp_file, "r") as f:
 features = extract_features(code)
 root = parse_cpp(code)
 
-result = analyze_node(root)
+table = build_function_table(root)
+
+result = table.get(
+    "solve",
+    analyze_node(root)
+)
 DEBUG=True
 print("=" * 40)
 print("            ALGOLENS")

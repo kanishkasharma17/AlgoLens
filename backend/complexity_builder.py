@@ -43,7 +43,10 @@ def get_update_expression(for_node):
 
     return None
 
-def analyze_node(node):
+def analyze_node(
+    node,
+    function_table=None
+):
 
     # ------------------
     # STL Calls
@@ -52,7 +55,7 @@ def analyze_node(node):
     if node.type == "call_expression":
         
         called = called_function_name(node)
-
+        
         if called == "sort":
             return make_complexity(
                 n_power=1,
@@ -68,9 +71,12 @@ def analyze_node(node):
                 n_power=0,
                 log_power=1
             )
-
+        if (
+    function_table
+    and called in function_table
+):
+            return function_table[called]
         return make_complexity()
-
     # ------------------
     # Compound Statement
     # ------------------
@@ -81,7 +87,7 @@ def analyze_node(node):
 
         for child in node.children:
 
-            child_cost = analyze_node(child)
+            child_cost = analyze_node(child,function_table)
 
             result = add(
                 result,
@@ -125,7 +131,7 @@ def analyze_node(node):
 
             if child.type == "compound_statement":
 
-                body_cost = analyze_node(child)
+                body_cost = analyze_node(child,function_table)
 
         return multiply(
             loop_cost,
@@ -140,7 +146,7 @@ def analyze_node(node):
 
     for child in node.children:
 
-        child_cost = analyze_node(child)
+        child_cost = analyze_node(child,function_table)
 
         result = add(
             result,
