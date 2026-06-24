@@ -31,7 +31,22 @@ def called_function_name(node):
 
     return None
 
-def analyze_node(node):
+def get_update_expression(for_node):
+
+    for child in for_node.children:
+
+        if (
+            child.type == "update_expression"
+            or child.type == "assignment_expression"
+        ):
+            return child
+
+    return None
+
+def analyze_node(
+    node,
+    function_table=None
+):
 
     # ------------------
     # STL Calls
@@ -40,7 +55,7 @@ def analyze_node(node):
     if node.type == "call_expression":
         
         called = called_function_name(node)
-
+        
         if called == "sort":
             return make_complexity(
                 n_power=1,
@@ -56,9 +71,12 @@ def analyze_node(node):
                 n_power=0,
                 log_power=1
             )
-
+        if (
+    function_table
+    and called in function_table
+):
+            return function_table[called]
         return make_complexity()
-
     # ------------------
     # Compound Statement
     # ------------------
@@ -69,7 +87,7 @@ def analyze_node(node):
 
         for child in node.children:
 
-            child_cost = analyze_node(child)
+            child_cost = analyze_node(child,function_table)
 
             result = add(
                 result,
@@ -83,8 +101,26 @@ def analyze_node(node):
     # ------------------
 
     if node.type == "for_statement":
-
-        loop_cost = make_complexity(
+        update_node = get_update_expression(node)
+        is_log_loop = False
+        if update_node:
+            update_text = update_node.text.decode("utf8")
+            if (
+        "/=2" in update_text
+        or "/= 2" in update_text
+        or "*=2" in update_text
+        or "*= 2" in update_text
+        or "/ 2" in update_text
+        or "* 2" in update_text
+    ):
+                is_log_loop = True
+        if is_log_loop:
+                    loop_cost = make_complexity(
+        n_power=0,
+        log_power=1
+    )
+        else:
+                    loop_cost = make_complexity(
             n_power=1,
             log_power=0
         )
@@ -95,7 +131,7 @@ def analyze_node(node):
 
             if child.type == "compound_statement":
 
-                body_cost = analyze_node(child)
+                body_cost = analyze_node(child,function_table)
 
         return multiply(
             loop_cost,
@@ -110,7 +146,7 @@ def analyze_node(node):
 
     for child in node.children:
 
-        child_cost = analyze_node(child)
+        child_cost = analyze_node(child,function_table)
 
         result = add(
             result,
