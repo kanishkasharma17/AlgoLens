@@ -3,33 +3,13 @@ from complexity_model import (
     multiply,
     add
 )
-
-
-
-def find_identifier(node):
-
-    if node.type == "identifier":
-        return node
-
-    for child in node.children:
-
-        result = find_identifier(child)
-
-        if result:
-            return result
-
-    return None
-def called_function_name(node):
-
-    if node.type != "call_expression":
-        return None
-
-    ident = find_identifier(node)
-
-    if ident:
-        return ident.text.decode("utf8")
-
-    return None
+from analyzers.recursion_analyzer import(
+    classify_recursion
+)
+from ast_utils import (
+    get_function_name,
+    called_function_name
+)
 
 def get_update_expression(for_node):
 
@@ -47,7 +27,21 @@ def analyze_node(
     node,
     function_table=None
 ):
+    if node.type == "function_definition":
 
+        function_name = get_function_name(node)
+
+        recursion_type = classify_recursion(
+        node,
+        function_name
+        )
+
+        if recursion_type == "LINEAR":
+
+            return make_complexity(
+            n_power=1,
+            log_power=0
+        )
     # ------------------
     # STL Calls
     # ------------------

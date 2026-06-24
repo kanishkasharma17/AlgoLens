@@ -1,8 +1,8 @@
-from function_analyzer import (
-    collect_functions,
-    get_function_name
+from function_analyzer import collect_functions
+from ast_utils import (
+    get_function_name,
+    called_function_name
 )
-from complexity_builder import called_function_name
 
 
 def build_call_graph(root):

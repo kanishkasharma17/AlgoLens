@@ -1,5 +1,7 @@
 from parser import parse_cpp
 from complexity_builder import analyze_node
+from ast_utils import get_function_name
+
 
 def build_function_table(root):
 
@@ -47,14 +49,7 @@ def find_identifier(node):
             return result
 
     return None
-def get_function_name(node):
 
-    ident = find_identifier(node)
-
-    if ident:
-        return ident.text.decode("utf8")
-
-    return None
 def collect_functions(root):
 
     functions = {}
