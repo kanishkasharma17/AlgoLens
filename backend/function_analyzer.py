@@ -7,18 +7,30 @@ def build_function_table(root):
 
     function_complexities = {}
 
-    # Pass 1
-    for name, node in functions.items():
+    for name in functions:
 
-        function_complexities[name] = analyze_node(node)
+        function_complexities[name] = {
+        "n_power": 0,
+        "log_power": 0
+        }
+    changed = True
 
-    # Pass 2
-    for name, node in functions.items():
+    while changed:
 
-        function_complexities[name] = analyze_node(
+        changed = False
+
+        for name, node in functions.items():
+
+            new_complexity = analyze_node(
             node,
             function_complexities
         )
+
+            if new_complexity != function_complexities[name]:
+
+                function_complexities[name] = new_complexity
+
+                changed = True
 
     return function_complexities
 

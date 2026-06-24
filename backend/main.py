@@ -45,3 +45,15 @@ print("\nComplexity Object:")
 print(result)
 
 print("=" * 40)
+print("\nFUNCTION TABLE:")
+
+for name, comp in table.items():
+
+    print(
+        name,
+        "->",
+        complexity_to_string(
+            comp["n_power"],
+            comp["log_power"]
+        )
+    )
