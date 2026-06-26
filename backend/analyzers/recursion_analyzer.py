@@ -111,17 +111,12 @@ def looks_like_divide_and_conquer(
         function_name
     )
 
-    # Divide & Conquer should make exactly
-    # two recursive calls
-    if len(calls) != 2:
+    if not calls:
         return False
 
-    # Look for "/2" or "/ 2" anywhere
-    # in the function body
     for call in calls:
+
         if not has_half_argument(call):
             return False
+
     return True
-
-
-    
