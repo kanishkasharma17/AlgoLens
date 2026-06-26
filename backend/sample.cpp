@@ -1,6 +1,5 @@
-void fibo(int n){
+void fib(int n){
     if(n<=1) return;
-
-    fibo(n-1);
-    fibo(n-2);
+    fib(n-1);
+    fib(n-2);
 }

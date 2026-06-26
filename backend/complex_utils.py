@@ -78,3 +78,15 @@ def classify_complexity(
 
     return POLYNOMIAL
 
+def make_complexity(
+    family="POLYNOMIAL",
+    n_power=0,
+    log_power=0,
+    base=None
+):
+    return {
+        "family": family,
+        "n_power": n_power,
+        "log_power": log_power,
+        "base": base
+    }
