@@ -72,9 +72,6 @@ def extract_recurrence(
         function_name
     )
 
-    print(classify_recursion(function_node, function_name))
-    print(looks_like_divide_and_conquer(function_node, function_name))
-
     if recursion_type not in (
     "LINEAR",
     "BINARY"

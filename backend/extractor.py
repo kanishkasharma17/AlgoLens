@@ -63,8 +63,7 @@ def extract_features(code):
 
         elif recursion_type == "BINARY":
             features["binary_recursive_functions"] += 1
-    print("\nGRAPH =", graph)
-    print("RECURSIVE FUNCTIONS =", recursive_function_names)
+    
 
     
 
