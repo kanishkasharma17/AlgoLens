@@ -40,3 +40,21 @@ def classify_recursion(
         return "BINARY"
 
     return "MULTI_BRANCH"
+
+def recursion_complexity(recursion_type):
+
+    if recursion_type == "LINEAR":
+        return {
+            "n_power": 1,
+            "log_power": 0
+        }
+
+    if recursion_type == "BINARY":
+        return {
+            "type": "EXPONENTIAL"
+        }
+
+    return {
+        "n_power": 0,
+        "log_power": 0
+    }

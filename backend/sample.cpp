@@ -1,5 +1,6 @@
-void solver(int n){
-    for(int i=0;i<n;i++){
+void fibo(int n){
+    if(n<=1) return;
 
-    }
+    fibo(n-1);
+    fibo(n-2);
 }

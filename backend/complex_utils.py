@@ -1,4 +1,4 @@
-def complexity_to_string(n_power, log_power):
+def complexity_to_string(n_power, log_power,complexity_type=None):
 
     superscripts = {
         0: "⁰",
@@ -12,12 +12,16 @@ def complexity_to_string(n_power, log_power):
         8: "⁸",
         9: "⁹"
     }
-
     def to_superscript(num):
         return "".join(
             superscripts[int(d)]
             for d in str(num)
         )
+    if complexity_type == EXPONENTIAL:
+        return "O(2ⁿ)"
+    
+
+    
 
     if n_power == 0 and log_power == 0:
         return "O(1)"
@@ -43,3 +47,34 @@ def complexity_to_string(n_power, log_power):
             )
 
     return "O(" + " ".join(parts) + ")"
+
+CONSTANT = "CONSTANT"
+LOG = "LOG"
+LINEAR = "LINEAR"
+N_LOG_N = "N_LOG_N"
+POLYNOMIAL = "POLYNOMIAL"
+EXPONENTIAL = "EXPONENTIAL"
+
+def classify_complexity(
+    n_power,
+    log_power,
+    recursion_type=None
+):
+
+    if recursion_type == "BINARY":
+        return EXPONENTIAL
+
+    if n_power == 0 and log_power == 0:
+        return CONSTANT
+
+    if n_power == 0 and log_power == 1:
+        return LOG
+
+    if n_power == 1 and log_power == 0:
+        return LINEAR
+
+    if n_power == 1 and log_power == 1:
+        return N_LOG_N
+
+    return POLYNOMIAL
+
