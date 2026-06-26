@@ -1,5 +1,25 @@
 from complex_utils import make_complexity
 
+def has_half_argument(call_node):
+
+    def visit(node):
+
+        if node.type == "binary_expression":
+
+            text = node.text.decode("utf8")
+
+            if "/2" in text or "/ 2" in text:
+                return True
+
+        for child in node.children:
+
+            if visit(child):
+                return True
+
+        return False
+
+    return visit(call_node)
+
 def count_self_calls(function_node, function_name):
 
     count = 0
@@ -98,10 +118,10 @@ def looks_like_divide_and_conquer(
 
     # Look for "/2" or "/ 2" anywhere
     # in the function body
-    text = function_node.text.decode("utf8")
+    for call in calls:
+        if not has_half_argument(call):
+            return False
+    return True
 
-    if "/2" in text or "/ 2" in text:
-        return True
 
-    return False
     

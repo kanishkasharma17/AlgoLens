@@ -1,5 +1,5 @@
-void fib(int n){
-    if(n<=1) return;
-    fib(n-1);
-    fib(n-2);
+void foo(int n){
+    int x=n/2;
+    foo(n-1);
+    foo(n-2);
 }
