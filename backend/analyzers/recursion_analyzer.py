@@ -1,14 +1,29 @@
 from complex_utils import make_complexity
 
-def has_half_argument(call_node):
+def has_half_argument(
+    call_node,
+    symbols
+):
 
     def visit(node):
 
+        # Explicit n/2 or x/2
         if node.type == "binary_expression":
 
             text = node.text.decode("utf8")
 
             if "/2" in text or "/ 2" in text:
+                return True
+
+        # Symbolic variable (e.g., mid)
+        if node.type == "identifier":
+
+            name = node.text.decode("utf8")
+
+            if (
+                name in symbols
+                and symbols[name] == "HALF"
+            ):
                 return True
 
         for child in node.children:
@@ -82,6 +97,7 @@ def recursion_complexity(recursion_type):
         "log_power": 0
     }
 
+
 def recursive_calls(function_node, function_name):
 
     calls = []
@@ -102,21 +118,31 @@ def recursive_calls(function_node, function_name):
 
     return calls
 
+from analyzers.symbolic_analyzer import collect_half_variables
+
 def looks_like_divide_and_conquer(
     function_node,
     function_name
 ):
+
+    symbols = collect_half_variables(
+        function_node
+    )
+
     calls = recursive_calls(
         function_node,
         function_name
     )
 
-    if not calls:
+    if len(calls) != 2:
         return False
 
     for call in calls:
 
-        if not has_half_argument(call):
+        if not has_half_argument(
+            call,
+            symbols
+        ):
             return False
 
     return True

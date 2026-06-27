@@ -50,8 +50,7 @@ if target_name:
         node,
         target_name
     )
-    print("\nFunction:", target_name)
-    print("Recurrence:", rec)
+    
 
     if rec:
 

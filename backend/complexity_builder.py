@@ -74,9 +74,7 @@ def analyze_node(
     # ------------------
 
     if node.type == "compound_statement":
-        print("Compound children: ")
-        for child in node.children:
-            print(" ",child.type)
+        
             
         result = make_complexity()
 

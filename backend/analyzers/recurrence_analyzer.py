@@ -5,7 +5,7 @@ from analyzers.recursion_analyzer import (
 
 from complexity_builder import analyze_node
 
-
+from analyzers.symbolic_analyzer import collect_half_variables
 def make_recurrence(a, b, work):
 
     return {
@@ -19,7 +19,8 @@ def extract_recurrence(
     function_node,
     function_name
 ):
-
+    symbols=collect_half_variables(function_node)
+    
     recursion_type = classify_recursion(
         function_node,
         function_name
