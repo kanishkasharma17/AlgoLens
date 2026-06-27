@@ -89,3 +89,6 @@ def master_report(recurrence):
         f"Master Theorem Case {case}\n"
         f"{complexity_to_string(result['n_power'], result['log_power'])}"
     )
+
+
+

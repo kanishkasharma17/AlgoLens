@@ -4,7 +4,8 @@ from complexity_model import (
     add
 )
 from analyzers.recursion_analyzer import(
-    classify_recursion
+    classify_recursion,
+    recursion_complexity
 )
 from ast_utils import (
     get_function_name,
@@ -29,19 +30,16 @@ def analyze_node(
 ):
     if node.type == "function_definition":
 
-        function_name = get_function_name(node)
+        for child in node.children:
 
-        recursion_type = classify_recursion(
-        node,
-        function_name
-        )
+            if child.type == "compound_statement":
 
-        if recursion_type == "LINEAR":
+                return analyze_node(
+                child,
+                function_table
+            )
 
-            return make_complexity(
-            n_power=1,
-            log_power=0
-        )
+        return make_complexity()
     # ------------------
     # STL Calls
     # ------------------
@@ -76,7 +74,10 @@ def analyze_node(
     # ------------------
 
     if node.type == "compound_statement":
-
+        print("Compound children: ")
+        for child in node.children:
+            print(" ",child.type)
+            
         result = make_complexity()
 
         for child in node.children:

@@ -1,12 +1,24 @@
-void mergeSort(int n)
+#include <vector>
+using namespace std;
+
+void mergeSort(vector<int>& a, int l, int r)
 {
-    if(n<=1)
+    if (l >= r)
         return;
 
-    mergeSort(n/2);
-    mergeSort(n/2);
+    int mid = (l + r) / 2;
 
-    for(int i=0;i<n;i++)
+    mergeSort(a, l, mid);
+    mergeSort(a, mid + 1, r);
+
+    for (int i = l; i <= r; i++)
     {
+        // Simulate merge work
     }
+}
+
+int main()
+{
+    vector<int> arr = {5,4,3,2,1};
+    mergeSort(arr, 0, arr.size()-1);
 }

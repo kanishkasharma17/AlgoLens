@@ -1,5 +1,24 @@
-def complexity_to_string(n_power, log_power,complexity_type=None):
+def complexity_to_string(
+    complexity_or_n,
+    log_power=None,
+    complexity_type=None
+):
+    if isinstance(complexity_or_n, dict):
 
+        complexity = complexity_or_n
+
+        if complexity["family"] == EXPONENTIAL:
+            return "O(2ⁿ)"
+
+        n_power = complexity["n_power"]
+        log_power = complexity["log_power"]
+
+    else:
+
+        n_power = complexity_or_n
+
+        if complexity_type == EXPONENTIAL:
+            return "O(2ⁿ)"
     superscripts = {
         0: "⁰",
         1: "¹",
@@ -20,9 +39,6 @@ def complexity_to_string(n_power, log_power,complexity_type=None):
     if complexity_type == EXPONENTIAL:
         return "O(2ⁿ)"
     
-
-    
-
     if n_power == 0 and log_power == 0:
         return "O(1)"
 
