@@ -27,7 +27,7 @@ with open(cpp_file, "r") as f:
 features = extract_features(code)
 root = parse_cpp(code)
 
-table = build_function_table(root)
+# table = build_function_table(root)
 
 functions = collect_functions(root)
 

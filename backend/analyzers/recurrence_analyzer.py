@@ -9,6 +9,8 @@ from complexity_builder import analyze_node
 from analyzers.symbolic_analyzer import (      collect_divide_variables,
     get_call_divisor
 )
+from analyzers.argument_classifier import classify_argument
+from analyzers.divisor_mapper import divisor_from_argument
 def make_recurrence(a, b, work):
 
     return {
@@ -53,16 +55,41 @@ def extract_recurrence(
 
     call_count = len(calls)
 
-    divisor = get_call_divisor(
-    calls[0],
-    symbols
+    argument_type = classify_argument(
+    calls[0]
 )
+
+    divisor = divisor_from_argument(
+    argument_type
+)
+    if divisor is None:
+        divisor = get_call_divisor(
+        calls[0],
+        symbols
+    )
 
     recurrence = make_recurrence(
         a=call_count,
         b=divisor,
         work=work
     )
+    
+    #new section
+    argument_type = classify_argument(calls[0])
+    print("Argument Type =", argument_type)
+
+    divisor = divisor_from_argument(argument_type)
+
+    print("Mapped Divisor =", divisor)
+
+    if divisor is None:
+
+        divisor = get_call_divisor(
+        calls[0],
+        symbols
+    )
+
+    print("Final Divisor =", divisor)
 
     return recurrence
 
