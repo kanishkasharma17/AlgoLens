@@ -1,16 +1,17 @@
 from parser import parse_cpp
 from function_analyzer import collect_functions
-from analyzers.symbolic_analyzer import collect_half_variables
+from analyzers.symbolic_analyzer import collect_divide_variables
 
 code = """
 
-void mergeSort(int l,int r)
+void solve(int n)
 {
-    int mid=(l+r)/2;
+    if(n<=1)
+        return;
 
-    mergeSort(l,mid);
+    int third = n/3;
 
-    mergeSort(mid+1,r);
+    solve(third);
 }
 
 """
@@ -19,8 +20,8 @@ root = parse_cpp(code)
 
 functions = collect_functions(root)
 
-node = functions["mergeSort"]
+node = functions["solve"]
 
 print(
-    collect_half_variables(node)
+    collect_divide_variables(node)
 )

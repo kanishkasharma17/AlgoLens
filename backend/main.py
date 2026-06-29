@@ -9,7 +9,8 @@ from function_analyzer import(
 ) 
 from analyzers.master_theorem import (
     solve_master_theorem,
-    master_report
+    master_report,
+    detailed_master_report
 )
 from analyzers.recurrence_analyzer import extract_recurrence
 from analyzers.master_theorem import (
@@ -51,9 +52,10 @@ if target_name:
         target_name
     )
     
+       
+    
 
     if rec:
-
         solve_master_theorem(rec)
 
         result = solve_complexity(rec)
@@ -69,7 +71,7 @@ if target_name:
 
         reason = "Static Analysis"
 
-DEBUG = False
+DEBUG = False 
 print("=" * 40)
 print("            ALGOLENS")
 print("=" * 40)
@@ -92,9 +94,14 @@ print(
 print("\nComplexity Object:")
 print(result)
 
-
-
-
+if rec:
+    print()
+    print(
+        detailed_master_report(
+            rec,
+            result
+        )
+    )
 
 print("=" * 40)
 print("\nFUNCTION TABLE:")
@@ -110,17 +117,12 @@ for name, comp in table.items():
         )
     )
 
-reason = "Static Analysis"
 
-if rec:
 
-    reason = (
-        f"Master Theorem "
-        f"Case {determine_case(rec)}"
-    )
 
-print("\nReason:")
-print(reason)
+
+
+
 
 
 

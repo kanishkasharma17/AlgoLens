@@ -1,6 +1,9 @@
 from complex_utils import make_complexity
-
-def has_half_argument(
+from analyzers.symbolic_analyzer import (
+    collect_divide_variables,
+    get_call_divisor
+)
+def has_divide_argument(
     call_node,
     symbols
 ):
@@ -118,31 +121,38 @@ def recursive_calls(function_node, function_name):
 
     return calls
 
-from analyzers.symbolic_analyzer import collect_half_variables
+from analyzers.symbolic_analyzer import collect_divide_variables
 
 def looks_like_divide_and_conquer(
     function_node,
     function_name
 ):
 
-    symbols = collect_half_variables(
-        function_node
-    )
+    symbols = collect_divide_variables(function_node)
+    
 
     calls = recursive_calls(
         function_node,
         function_name
     )
 
-    if len(calls) != 2:
+    
+
+    if len(calls) == 0:
         return False
 
     for call in calls:
 
-        if not has_half_argument(
+        
+
+        divisor = get_call_divisor(
             call,
             symbols
-        ):
+        )
+
+        
+
+        if divisor is None:
             return False
 
     return True

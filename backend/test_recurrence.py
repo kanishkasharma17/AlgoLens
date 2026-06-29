@@ -8,12 +8,10 @@ from analyzers.recurrence_analyzer import (
 
 code = """
 
-void bs(int n)
-{
-    if(n<=1)
-        return;
-
-    bs(n/2);
+void solve(int n){
+    if(n<=1) return;
+    int third=n/3;
+    solve(third);
 }
 
 """
@@ -22,11 +20,11 @@ root = parse_cpp(code)
 
 functions = collect_functions(root)
 
-node = functions["bs"]
+node = functions["solve"]
 
 rec = extract_recurrence(
     node,
-    "bs"
+    "solve"
 )
 
 print(rec)
