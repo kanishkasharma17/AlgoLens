@@ -91,109 +91,136 @@ def master_report(recurrence):
     )
 
 
+def subscript(text):
+
+    table = str.maketrans(
+        "0123456789",
+        "₀₁₂₃₄₅₆₇₈₉"
+    )
+
+    return text.translate(table)
+
+def pretty_number(x):
+
+    if float(x).is_integer():
+        return str(int(x))
+
+    return str(round(x, 2))
+
 
 from math import log
 
 from complex_utils import complexity_to_string
-from analyzers.master_theorem import determine_case
 
 
-SUBSCRIPT = str.maketrans(
-    "0123456789",
-    "₀₁₂₃₄₅₆₇₈₉"
-)
+def theta_string(n_power, log_power):
 
+    if n_power == 0 and log_power == 0:
+        return "Θ(1)"
 
-def detailed_master_report(recurrence, result):
+    if n_power == 1 and log_power == 0:
+        return "Θ(n)"
 
-    a = recurrence["a"]
-    b = recurrence["b"]
-    work = recurrence["work"]
+    if n_power == 1 and log_power == 1:
+        return "Θ(n log n)"
 
-    work_string = complexity_to_string(
-        work["n_power"],
-        work["log_power"]
-    )
+    if n_power == 0 and log_power == 1:
+        return "Θ(log n)"
 
-    result_string = complexity_to_string(
-        result["n_power"],
-        result["log_power"]
-    )
+    if log_power == 0:
+        return f"Θ(n^{n_power})"
 
-    case = determine_case(recurrence)
+    return f"Θ(n^{n_power} log^{log_power} n)"
 
-    base = str(b).translate(SUBSCRIPT)
+def section(title):
+    return f"{title}\n{'-' * len(title)}"
+
+def detailed_master_report(rec, result):
+
+    a = rec["a"]
+    b = rec["b"]
+    work = rec["work"]
 
     exponent = log(a, b)
 
-    if abs(exponent) < 1e-9:
-        exponent_text = "0"
-    elif abs(exponent - round(exponent)) < 1e-9:
-        exponent_text = str(int(round(exponent)))
-    else:
-        exponent_text = f"{exponent:.2f}"
+    exp_text = pretty_number(exponent)
 
-    if a == 1:
-        recurrence_string = (
-            f"T(n) = T(n/{b}) + {work_string}"
+    recurrence = (
+        f"T(n) = "
+        f"{'' if a == 1 else str(a)}"
+        f"T(n/{b}) + "
+        f"{theta_string(work['n_power'], work['log_power'])}"
+    )
+
+    report = []
+
+    report.append(section("Master Theorem Analysis"))
+    
+    report.append("")
+
+    report.append(section("General Form"))
+    report.append("T(n) = aT(n/b) + f(n)")
+    report.append("")
+
+    report.append(section("Detected Recurrence"))
+    
+    report.append(recurrence)
+    report.append("")
+
+    report.append(section("Constants"))
+    
+    report.append(f"a = {a}")
+    report.append(f"b = {b}")
+    report.append(f"f(n) = {theta_string(work['n_power'], work['log_power'])}")
+    report.append("")
+
+    report.append(section("Comparison"))
+    
+    report.append(f"log{subscript(str(b))}(a) = log{subscript(str(b))}({a}) = {exp_text}")
+    report.append("")
+    if exponent == 0:
+        theta = "Θ(1)"
+    elif exponent == 1:
+        theta = "Θ(n)"
+    else:
+        theta = f"Θ(n^{exp_text})"
+    report.append(f"n^(log{subscript(str(b))}a) = {theta}")
+    report.append("")
+
+
+    report.append(section("Observation"))
+    
+
+    report.append(
+    f"f(n) = {theta_string(work['n_power'], work['log_power'])}"
+    )
+    report.append("")
+
+    report.append(
+    f"n^(log{subscript(str(b))}a) = {theta}"
+)
+    report.append("")
+
+    report.append(
+    f"Since both growth rates are equal,\n"
+    f"Master Theorem Case {determine_case(rec)} applies."
+)
+    report.append("")
+
+    report.append(section("Solved Recurrence"))
+    
+    report.append(
+        f"T(n) = {theta_string(result['n_power'], result['log_power'])}"
+    )
+    report.append("")
+
+    report.append(section("Final Complexity"))
+    
+    report.append(
+        complexity_to_string(
+            result["n_power"],
+            result["log_power"]
         )
-    else:
-        recurrence_string = (
-            f"T(n) = {a}T(n/{b}) + {work_string}"
-        )
+    )
 
-    lines = [
-
-        "Master Theorem Analysis",
-        "------------------------",
-
-        f"Recurrence : {recurrence_string}",
-        "",
-
-        "Constants",
-        f"  a = {a}",
-        f"  b = {b}",
-        f"  f(n) = {work_string}",
-        "",
-
-        "Comparison",
-        f"  log{base}({a}) = {exponent_text}",
-        f"  n^log{base}({a}) = O(n^{exponent_text})",
-        "",
-
-    ]
-
-    if case == 1:
-
-        lines.extend([
-            "Observation",
-            f"  {work_string} grows slower than O(n^{exponent_text}).",
-            "",
-            "Master Theorem Case 1",
-        ])
-
-    elif case == 2:
-
-        lines.extend([
-            "Observation",
-            f"  {work_string} matches O(n^{exponent_text}).",
-            "",
-            "Master Theorem Case 2",
-        ])
-
-    else:
-
-        lines.extend([
-            "Observation",
-            f"  {work_string} grows faster than O(n^{exponent_text}).",
-            "",
-            "Master Theorem Case 3",
-        ])
-
-    lines.extend([
-        "",
-        f"Final Complexity : {result_string}"
-    ])
-
-    return "\n".join(lines)
-
+    return "\n".join(report)

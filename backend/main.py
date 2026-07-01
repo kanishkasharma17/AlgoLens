@@ -1,24 +1,27 @@
 from pathlib import Path
+import analyzers.recurrence_analyzer as ra
+
+
 from extractor import extract_features
 from parser import parse_cpp
 from complexity_builder import analyze_node
 from complex_utils import complexity_to_string
-from function_analyzer import(
+
+from function_analyzer import (
     build_function_table,
     collect_functions
-) 
+)
+
+from analyzers.recurrence_analyzer import extract_recurrence
+
 from analyzers.master_theorem import (
     solve_master_theorem,
-    master_report,
+    solve_complexity,
+    determine_case,
     detailed_master_report
 )
-from analyzers.recurrence_analyzer import extract_recurrence
-from analyzers.master_theorem import (
-    solve_complexity,
-    determine_case
-)
-BASE_DIR = Path(__file__).parent
 
+BASE_DIR = Path(__file__).parent
 cpp_file = BASE_DIR / "sample.cpp"
 
 with open(cpp_file, "r") as f:
@@ -27,15 +30,20 @@ with open(cpp_file, "r") as f:
 features = extract_features(code)
 root = parse_cpp(code)
 
-# table = build_function_table(root)
+# Required for static analysis and function table
+table = build_function_table(root)
 
 functions = collect_functions(root)
 
-# Default result
 result = analyze_node(root)
 reason = "Whole Program Analysis"
+rec = None
+def section(title):
+    return f"{title}\n{'-' * len(title)}"
+# ---------------------------------------
+# Select target function
+# ---------------------------------------
 
-# Choose a target function
 if "solve" in functions:
     target_name = "solve"
 elif functions:
@@ -43,19 +51,23 @@ elif functions:
 else:
     target_name = None
 
+# ---------------------------------------
+# Analyze recurrence if present
+# ---------------------------------------
+
 if target_name:
 
     node = functions[target_name]
 
+    
     rec = extract_recurrence(
         node,
         target_name
     )
     
-       
-    
 
     if rec:
+
         solve_master_theorem(rec)
 
         result = solve_complexity(rec)
@@ -71,7 +83,12 @@ if target_name:
 
         reason = "Static Analysis"
 
-DEBUG = False 
+# ---------------------------------------
+# Output
+# ---------------------------------------
+
+DEBUG = False
+
 print("=" * 40)
 print("            ALGOLENS")
 print("=" * 40)
@@ -79,23 +96,27 @@ print("=" * 40)
 print(f"\nFile: {cpp_file.name}")
 
 if DEBUG:
-    print("\nFeatures:")
+
+    print(section("\nFeatures:"))
+
     for key, value in features.items():
         print(f"  {key}: {value}")
 
-print("\nPredicted Complexity:")
+print(section("\nPredicted Complexity"))
+
 print(
     complexity_to_string(
-    result["n_power"],
-    result["log_power"]
+        result["n_power"],
+        result["log_power"]
     )
 )
 
-print("\nComplexity Object:")
-print(result)
+
 
 if rec:
+
     print()
+
     print(
         detailed_master_report(
             rec,
@@ -104,25 +125,16 @@ if rec:
     )
 
 print("=" * 40)
-print("\nFUNCTION TABLE:")
+
+print(section("\nFunction Summary"))
 
 for name, comp in table.items():
 
     print(
         name,
-        "->",
+        "→",
         complexity_to_string(
             comp["n_power"],
             comp["log_power"]
         )
     )
-
-
-
-
-
-
-
-
-
-

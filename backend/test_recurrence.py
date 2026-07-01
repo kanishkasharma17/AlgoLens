@@ -9,9 +9,9 @@ from analyzers.recurrence_analyzer import (
 code = """
 
 void solve(int n){
-    if(n<=1) return;
-    int third=n/3;
-    solve(third);
+    int mid=n/2;
+    int x=mid;
+    solve(x);
 }
 
 """

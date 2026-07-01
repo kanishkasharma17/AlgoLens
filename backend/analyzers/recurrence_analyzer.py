@@ -11,6 +11,11 @@ from analyzers.symbolic_analyzer import (      collect_divide_variables,
 )
 from analyzers.argument_classifier import classify_argument
 from analyzers.divisor_mapper import divisor_from_argument
+from analyzers.definition_resolver import resolve_definition
+from analyzers.definition_tracker import collect_variable_definitions
+from analyzers.argument_utils import get_argument_name
+from analyzers.symbolic_analyzer import detect_divisor
+
 def make_recurrence(a, b, work):
 
     return {
@@ -24,72 +29,93 @@ def extract_recurrence(
     function_node,
     function_name
 ):
-    symbols=collect_divide_variables(function_node)
-    
-    recursion_type = classify_recursion(
-        function_node,
-        function_name
-    )
 
-    if recursion_type not in("LINEAR","BINARY"):
-        return None
+    recursion_type = classify_recursion(
+    function_node,
+    function_name
+)
+
     
-    if not looks_like_divide_and_conquer(
-        function_node,
-        function_name
-    ):
+
+    divide = looks_like_divide_and_conquer(
+    function_node,
+    function_name
+)
+
+    
+
+    if recursion_type not in ("LINEAR", "BINARY"):
+        return None
+
+    if not divide:
         return None
 
     work = analyze_node(function_node)
 
     symbols = collect_divide_variables(
-    function_node
-)
+        function_node
+    )
 
+    definitions = collect_variable_definitions(
+        function_node
+    )
 
     calls = recursive_calls(
-    function_node,
-    function_name
-)
-
+        function_node,
+        function_name
+    )
 
     call_count = len(calls)
 
+    # -----------------------------
+    # Step 1 : Argument Classifier
+    # -----------------------------
     argument_type = classify_argument(
-    calls[0]
-)
+        calls[0]
+    )
 
     divisor = divisor_from_argument(
-    argument_type
-)
-    if divisor is None:
-        divisor = get_call_divisor(
-        calls[0],
-        symbols
+        argument_type
     )
+
+    # -----------------------------
+    # Step 2 : Symbolic Analyzer
+    # -----------------------------
+    if divisor is None:
+
+        divisor = get_call_divisor(
+            calls[0],
+            symbols
+        )
+
+    # -----------------------------
+    # Step 3 : Definition Resolver
+    # -----------------------------
+    if divisor is None:
+
+        variable = get_argument_name(
+            calls[0]
+        )
+
+        if variable:
+
+            expression = resolve_definition(
+                variable,
+                definitions
+            )
+
+            if expression:
+
+                divisor = detect_divisor(
+                    expression
+                )
+
 
     recurrence = make_recurrence(
         a=call_count,
         b=divisor,
         work=work
     )
-    
-    #new section
-    argument_type = classify_argument(calls[0])
-    print("Argument Type =", argument_type)
-
-    divisor = divisor_from_argument(argument_type)
-
-    print("Mapped Divisor =", divisor)
-
-    if divisor is None:
-
-        divisor = get_call_divisor(
-        calls[0],
-        symbols
-    )
-
-    print("Final Divisor =", divisor)
 
     return recurrence
 

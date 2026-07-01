@@ -122,35 +122,80 @@ def recursive_calls(function_node, function_name):
     return calls
 
 from analyzers.symbolic_analyzer import collect_divide_variables
+from analyzers.argument_classifier import classify_argument
+from analyzers.divisor_mapper import divisor_from_argument
+from analyzers.definition_tracker import collect_variable_definitions
+from analyzers.definition_resolver import resolve_definition
+from analyzers.argument_utils import get_argument_name
+from analyzers.symbolic_analyzer import (
+    collect_divide_variables,
+    get_call_divisor,
+    detect_divisor
+)
 
 def looks_like_divide_and_conquer(
     function_node,
     function_name
 ):
 
-    symbols = collect_divide_variables(function_node)
-    
+    symbols = collect_divide_variables(
+        function_node
+    )
+
+    definitions = collect_variable_definitions(
+        function_node
+    )
 
     calls = recursive_calls(
         function_node,
         function_name
     )
 
-    
-
     if len(calls) == 0:
         return False
 
     for call in calls:
 
-        
+        # ----------------------
+        # 1. Argument Classifier
+        # ----------------------
+        argument_type = classify_argument(call)
 
-        divisor = get_call_divisor(
-            call,
-            symbols
+        divisor = divisor_from_argument(
+            argument_type
         )
 
-        
+        # ----------------------
+        # 2. Symbolic Analyzer
+        # ----------------------
+        if divisor is None:
+
+            divisor = get_call_divisor(
+                call,
+                symbols
+            )
+
+        # ----------------------
+        # 3. Definition Resolver
+        # ----------------------
+        if divisor is None:
+
+            variable = get_argument_name(
+                call
+            )
+
+            if variable:
+
+                expression = resolve_definition(
+                    variable,
+                    definitions
+                )
+
+                if expression:
+
+                    divisor = detect_divisor(
+                        expression
+                    )
 
         if divisor is None:
             return False
