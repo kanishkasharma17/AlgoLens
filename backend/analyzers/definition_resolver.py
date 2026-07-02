@@ -5,10 +5,10 @@ def resolve_definition(variable, definitions):
     current = variable
 
     while current in definitions:
-
+        
         if current in visited:
-            break
-
+            return None
+        
         visited.add(current)
 
         expression = definitions[current]

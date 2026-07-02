@@ -31,31 +31,37 @@ def collect_divide_variables(function_node):
 
 def detect_divisor(text):
 
+    # Normalize
     text = text.replace(" ", "")
+    text = text.replace("(", "")
+    text = text.replace(")", "")
 
+    # Must contain division
     if "/" not in text:
         return None
 
     parts = text.split("/")
 
-    if len(parts) < 2:
+    if len(parts) != 2:
         return None
 
+    left = parts[0]
+    right = parts[1]
+
+    # Right side must begin with digits
     divisor = ""
 
-    for ch in parts[1]:
+    for ch in right:
 
         if ch.isdigit():
             divisor += ch
         else:
             break
 
-    if divisor:
+    if divisor == "":
+        return None
 
-        return int(divisor)
-
-    return None
-
+    return int(divisor)
 def get_call_divisor(
     call_node,
     symbols
@@ -70,7 +76,7 @@ def get_call_divisor(
 
             divisor = detect_divisor(text)
 
-            if divisor:
+            if divisor is not None:
                 return divisor
 
         # Symbolic variable (mid, third...)
