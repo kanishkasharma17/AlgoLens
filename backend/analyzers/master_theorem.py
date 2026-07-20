@@ -44,15 +44,11 @@ def determine_case(recurrence):
 
 def solve_complexity(recurrence):
 
-    case = determine_case(
-        recurrence
-    )
+    case = determine_case(recurrence)
+
+    exponent = recurrence["log_ab"]
 
     if case == 1:
-
-        exponent = round(
-            recurrence["log_ab"]
-        )
 
         return make_complexity(
             n_power=exponent
@@ -60,17 +56,12 @@ def solve_complexity(recurrence):
 
     if case == 2:
 
-        exponent = round(
-            recurrence["log_ab"]
-        )
-
         return make_complexity(
             n_power=exponent,
             log_power=1
         )
 
     return recurrence["work"]
-
 
 def master_report(recurrence):
 
@@ -128,7 +119,12 @@ def theta_string(n_power, log_power):
         return "Θ(log n)"
 
     if log_power == 0:
-        return f"Θ(n^{n_power})"
+        if isinstance(n_power, float):
+            power = f"{n_power:.2f}".rstrip("0").rstrip(".")
+        else:
+            power = str(n_power)
+
+        return f"Θ(n^{power})"
 
     return f"Θ(n^{n_power} log^{log_power} n)"
 
@@ -184,36 +180,60 @@ def detailed_master_report(rec, result):
         theta = "Θ(n)"
     else:
         theta = f"Θ(n^{exp_text})"
-    report.append(f"n^(log{subscript(str(b))}a) = {theta}")
+    report.append(section("Reference Growth"))
+
+    report.append(
+    f"n^log{subscript(str(b))}(a) = {theta}"
+)
     report.append("")
 
 
     report.append(section("Observation"))
-    
 
     report.append(
-    f"f(n) = {theta_string(work['n_power'], work['log_power'])}"
+        f"f(n) = {theta_string(work['n_power'], work['log_power'])}"
     )
+    
     report.append("")
 
-    report.append(
-    f"n^(log{subscript(str(b))}a) = {theta}"
-)
-    report.append("")
+    case = determine_case(rec)
 
-    report.append(
-    f"Since both growth rates are equal,\n"
-    f"Master Theorem Case {determine_case(rec)} applies."
-)
+    if case == 1:
+
+        report.append(
+            f"{theta_string(work['n_power'], work['log_power'])} grows "
+            f"asymptotically slower than {theta}."
+        )
+        report.append("")
+        report.append("Master Theorem Case 1 applies.")
+
+    elif case == 2:
+
+        report.append(
+            f"{theta_string(work['n_power'], work['log_power'])} and "
+            f"{theta} have the same asymptotic growth."
+        )
+        report.append("")
+        report.append("Master Theorem Case 2 applies.")
+
+    else:
+
+        report.append(
+            f"{theta_string(work['n_power'], work['log_power'])} grows "
+            f"asymptotically faster than {theta}."
+        )
+        report.append("")
+        report.append("Master Theorem Case 3 applies.")
+
     report.append("")
 
     report.append(section("Solved Recurrence"))
-    
-    report.append(
-        f"T(n) = {theta_string(result['n_power'], result['log_power'])}"
-    )
-    report.append("")
 
+    report.append(
+    f"T(n) = {theta_string(result['n_power'], result['log_power'])}"
+)
+
+    report.append("")
     report.append(section("Final Complexity"))
     
     report.append(

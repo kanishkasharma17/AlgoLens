@@ -46,12 +46,23 @@ def complexity_to_string(
 
     if n_power > 0:
 
+        if isinstance(n_power, float):
+
+            if n_power.is_integer():
+                n_power = int(n_power)
+
         if n_power == 1:
             parts.append("n")
+
+        elif isinstance(n_power, float):
+
+            parts.append(f"n^{n_power:.2f}".rstrip("0").rstrip("."))
+
         else:
+
             parts.append(
-                f"n{to_superscript(n_power)}"
-            )
+            f"n{to_superscript(n_power)}"
+        )
 
     if log_power > 0:
 

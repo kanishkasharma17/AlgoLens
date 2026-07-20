@@ -26,3 +26,19 @@ def classify_argument(call_node):
         return "COMPLEMENT"
 
     return "UNKNOWN"
+
+def get_argument_name(call_node):
+
+    def visit(node):
+
+        if node.type == "identifier":
+            return node.text.decode("utf8")
+
+        for child in node.children:
+            result = visit(child)
+            if result:
+                return result
+
+        return None
+
+    return visit(call_node)

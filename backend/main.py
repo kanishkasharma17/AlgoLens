@@ -1,7 +1,4 @@
 from pathlib import Path
-import analyzers.recurrence_analyzer as ra
-
-
 from extractor import extract_features
 from parser import parse_cpp
 from complexity_builder import analyze_node
@@ -55,6 +52,7 @@ else:
 # Analyze recurrence if present
 # ---------------------------------------
 
+
 if target_name:
 
     node = functions[target_name]
@@ -64,6 +62,7 @@ if target_name:
         node,
         target_name
     )
+
     
 
     if rec:

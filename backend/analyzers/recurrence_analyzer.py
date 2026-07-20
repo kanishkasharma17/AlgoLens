@@ -24,98 +24,82 @@ def make_recurrence(a, b, work):
         "work": work
     }
 
-
-def extract_recurrence(
-    function_node,
-    function_name
-):
+def extract_recurrence(function_node, function_name):
 
     recursion_type = classify_recursion(
-    function_node,
-    function_name
-)
-
-    
+        function_node,
+        function_name
+    )
 
     divide = looks_like_divide_and_conquer(
-    function_node,
-    function_name
-)
+        function_node,
+        function_name
+    )
 
-    
-
-    if recursion_type not in ("LINEAR", "BINARY"):
+    if recursion_type not in ("LINEAR", "BINARY","MULTI_BRANCH"):
         return None
 
     if not divide:
         return None
 
+
     work = analyze_node(function_node)
 
-    symbols = collect_divide_variables(
-        function_node
-    )
+    symbols = collect_divide_variables(function_node)
 
-    definitions = collect_variable_definitions(
-        function_node
-    )
+    definitions = collect_variable_definitions(function_node)
 
     calls = recursive_calls(
         function_node,
         function_name
     )
 
-    call_count = len(calls)
 
-    # -----------------------------
-    # Step 1 : Argument Classifier
-    # -----------------------------
-    argument_type = classify_argument(
-        calls[0]
-    )
+    divisors = []
 
-    divisor = divisor_from_argument(
-        argument_type
-    )
+    for call in calls:
 
-    # -----------------------------
-    # Step 2 : Symbolic Analyzer
-    # -----------------------------
-    if divisor is None:
+        argument_type = classify_argument(call)
 
-        divisor = get_call_divisor(
-            calls[0],
+        divisor = divisor_from_argument(argument_type)
+
+        if divisor is None:
+            divisor = get_call_divisor(
+            call,
             symbols
         )
 
-    # -----------------------------
-    # Step 3 : Definition Resolver
-    # -----------------------------
-    if divisor is None:
+        if divisor is None:
 
-        variable = get_argument_name(
-            calls[0]
-        )
+            variable = get_argument_name(call)
 
-        if variable:
+            if variable:
 
-            expression = resolve_definition(
+                expression = resolve_definition(
                 variable,
                 definitions
             )
 
-            if expression:
-
-                divisor = detect_divisor(
+                if expression:
+                    divisor = detect_divisor(
                     expression
                 )
 
+        if divisor is None:
+            return None
+
+        divisors.append(divisor)
+
+# All recursive calls must divide by the same value
+    if len(set(divisors)) != 1:
+        return None
 
     recurrence = make_recurrence(
-        a=call_count,
-        b=divisor,
-        work=work
-    )
+    a=len(calls),
+    b=divisors[0],
+    work=work
+)
+   
 
     return recurrence
 

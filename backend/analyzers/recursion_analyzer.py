@@ -156,15 +156,17 @@ def looks_like_divide_and_conquer(
 
     for call in calls:
 
+        
         # ----------------------
         # 1. Argument Classifier
         # ----------------------
+        
         argument_type = classify_argument(call)
-
+        
         divisor = divisor_from_argument(
             argument_type
         )
-
+        
         # ----------------------
         # 2. Symbolic Analyzer
         # ----------------------
@@ -199,5 +201,5 @@ def looks_like_divide_and_conquer(
 
         if divisor is None:
             return False
-
+    
     return True
