@@ -18,7 +18,7 @@ def build_function_table(root):
 
     # Initial values
     for name in functions:
-
+        
         function_complexities[name] = make_complexity()
 
     # Fixed-point propagation
@@ -45,20 +45,43 @@ def build_function_table(root):
     # Master Theorem Integration
     # -----------------------------
 
+    # -----------------------------
+# Master Theorem Integration
+# -----------------------------
+
     for name, node in functions.items():
 
-        rec = extract_recurrence(
-            node,
-            name
-        )
+        rec = extract_recurrence(node, name)
 
         if rec:
 
-            solve_master_theorem(rec)
+            if "type" in rec:
 
-            function_complexities[name] = (
-                solve_complexity(rec)
-            )
+                complexity = analyze_node(
+            node,
+            function_complexities,
+            name
+        )
+
+            else:
+
+                print("MASTER BRANCH")
+
+                solve_master_theorem(rec)
+
+                complexity = solve_complexity(rec)
+
+        else:
+
+            print("STATIC BRANCH")
+
+            complexity = analyze_node(
+        node,
+        function_complexities,
+        name
+    )
+
+        function_complexities[name] = complexity
 
     return function_complexities
 

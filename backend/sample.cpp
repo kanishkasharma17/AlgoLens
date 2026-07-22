@@ -1,3 +1,7 @@
-vector<int> cac(100);
+int solve(int n){
 
-cac[n]=5;
+    if(dp[n]!=-1)
+        return dp[n];
+
+    return dp[n]=solve(n-1)+solve(n-2);
+}

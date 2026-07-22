@@ -8,6 +8,7 @@ from function_analyzer import (
     build_function_table,
     collect_functions
 )
+from analyzers.dp_report import detailed_dp_report
 
 from analyzers.recurrence_analyzer import extract_recurrence
 
@@ -62,16 +63,24 @@ if target_name:
         node,
         target_name
     )
-
     
 
     if rec:
 
-        solve_master_theorem(rec)
+        if rec.get("type") == "MEMOIZATION":
 
-        result = solve_complexity(rec)
+            result = table[target_name]
+            
 
-        reason = (
+            reason = "Dynamic Programming"
+
+        else:
+
+            solve_master_theorem(rec)
+
+            result = solve_complexity(rec)
+
+            reason = (
             f"Master Theorem Case "
             f"{determine_case(rec)}"
         )
@@ -79,7 +88,6 @@ if target_name:
     else:
 
         result = table[target_name]
-
         reason = "Static Analysis"
 
 # ---------------------------------------
@@ -114,14 +122,24 @@ print(
 
 if rec:
 
-    print()
+    if rec.get("type") == "MEMOIZATION":
 
-    print(
-        detailed_master_report(
-            rec,
-            result
+        print()
+
+        print(
+            detailed_dp_report(result)
         )
-    )
+
+    else:
+
+        print()
+
+        print(
+            detailed_master_report(
+                rec,
+                result
+            )
+        )
 
 print("=" * 40)
 

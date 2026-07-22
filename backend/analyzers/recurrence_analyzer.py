@@ -30,8 +30,11 @@ def extract_recurrence(function_node, function_name):
         function_node,
         function_name
     )
+    
     if uses_memoization(function_node):
-        return None
+        return {
+            "type":"MEMOIZATION"
+        }
 
     divide = looks_like_divide_and_conquer(
         function_node,
