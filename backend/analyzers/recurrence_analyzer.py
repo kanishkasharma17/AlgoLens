@@ -3,7 +3,7 @@ from analyzers.recursion_analyzer import (
     looks_like_divide_and_conquer,
     recursive_calls
 )
-
+from analyzers.tabulation_detector import uses_tabulation
 from complexity_builder import analyze_node
 from analyzers.memoization_detector import uses_memoization
 from analyzers.symbolic_analyzer import (      collect_divide_variables,
@@ -30,7 +30,11 @@ def extract_recurrence(function_node, function_name):
         function_node,
         function_name
     )
-    
+    if uses_tabulation(function_node):
+
+        return {
+        "type": "TABULATION"
+    }
     if uses_memoization(function_node):
         return {
             "type":"MEMOIZATION"

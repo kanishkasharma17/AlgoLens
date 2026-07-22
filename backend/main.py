@@ -9,6 +9,7 @@ from function_analyzer import (
     collect_functions
 )
 from analyzers.dp_complexity import estimate_dp_complexity
+from analyzers.tabulation_report import detailed_tabulation_report
 from analyzers.dp_report import detailed_dp_report
 
 from analyzers.recurrence_analyzer import extract_recurrence
@@ -73,7 +74,11 @@ if target_name:
             result = estimate_dp_complexity(node)
 
             reason = "Dynamic Programming Analysis"
+        elif rec.get("type") == "TABULATION":
 
+            result = estimate_dp_complexity(node)
+            reason = "Dynamic Programming Analysis"
+    
         else:
 
             solve_master_theorem(rec)
@@ -129,6 +134,14 @@ if rec:
         print(
             detailed_dp_report(result)
         )
+
+    elif rec.get("type") == "TABULATION":
+
+        result = estimate_dp_complexity(node)
+
+        print(
+        detailed_tabulation_report(result)
+    )
 
     else:
 
