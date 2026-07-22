@@ -39,12 +39,21 @@ def detailed_dp_report(result):
     )
     report.append("")
 
-    report.append(section("Estimated Complexity"))
+    report.append(section("Estimated Time Complexity"))
     report.append(
-        complexity_to_string(
-            result["n_power"],
-            result["log_power"]
-        )
+    complexity_to_string(
+        result["n_power"],
+        result["log_power"]
     )
+)
+    report.append("")
+
+    report.append(section("Estimated Space Complexity"))
+    report.append(
+    complexity_to_string(
+        result["n_power"],
+        result["log_power"]
+    )
+)
 
     return "\n".join(report)

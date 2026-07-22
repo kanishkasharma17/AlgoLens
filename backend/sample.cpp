@@ -1,7 +1,12 @@
-int solve(int n){
+int dp[100][100];
 
-    if(dp[n]!=-1)
-        return dp[n];
+int solve(int i,int j){
 
-    return dp[n]=solve(n-1)+solve(n-2);
+    if(i==0||j==0)
+        return 0;
+
+    if(dp[i][j]!=-1)
+        return dp[i][j];
+
+    return dp[i][j]=solve(i-1,j)+solve(i,j-1);
 }

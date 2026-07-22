@@ -3,11 +3,12 @@ from extractor import extract_features
 from parser import parse_cpp
 from complexity_builder import analyze_node
 from complex_utils import complexity_to_string
-
+from complexity_model import make_complexity
 from function_analyzer import (
     build_function_table,
     collect_functions
 )
+from analyzers.dp_complexity import estimate_dp_complexity
 from analyzers.dp_report import detailed_dp_report
 
 from analyzers.recurrence_analyzer import extract_recurrence
@@ -69,10 +70,9 @@ if target_name:
 
         if rec.get("type") == "MEMOIZATION":
 
-            result = table[target_name]
-            
+            result = estimate_dp_complexity(node)
 
-            reason = "Dynamic Programming"
+            reason = "Dynamic Programming Analysis"
 
         else:
 
