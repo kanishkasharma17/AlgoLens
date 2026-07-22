@@ -43,7 +43,8 @@ def extract_recurrence(function_node, function_name):
         return None
 
 
-    work = analyze_node(function_node)
+    work = analyze_node(function_node,current_function=function_name)
+    print("WORK =",work)
 
     symbols = collect_divide_variables(function_node)
 

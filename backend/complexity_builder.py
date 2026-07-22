@@ -26,8 +26,13 @@ def get_update_expression(for_node):
 
 def analyze_node(
     node,
-    function_table=None
+    function_table=None,
+    current_function=None
 ):
+    name_node=node.child_by_field_name("declarator")
+    if name_node:
+         text=name_node.text.decode("utf8")
+         current_function=text.split("(")[0].split()[-1]
     if node.type == "function_definition":
 
         for child in node.children:
@@ -36,10 +41,12 @@ def analyze_node(
 
                 return analyze_node(
                 child,
-                function_table
+                function_table,
+                current_function
             )
 
         return make_complexity()
+    
     # ------------------
     # STL Calls
     # ------------------
@@ -47,6 +54,9 @@ def analyze_node(
     if node.type == "call_expression":
         
         called = called_function_name(node)
+        if(
+             current_function is not  None and called==current_function):
+             return make_complexity()
         
         if called == "sort":
             return make_complexity(
@@ -80,7 +90,7 @@ def analyze_node(
 
         for child in node.children:
 
-            child_cost = analyze_node(child,function_table)
+            child_cost = analyze_node(child,function_table,current_function)
 
             result = add(
                 result,
@@ -118,13 +128,16 @@ def analyze_node(
             log_power=0
         )
 
-        body_cost = make_complexity()
+        body = node.child_by_field_name("body")
 
-        for child in node.children:
-
-            if child.type == "compound_statement":
-
-                body_cost = analyze_node(child,function_table)
+        if body:
+            body_cost = analyze_node(
+        body,
+        function_table,
+        current_function
+    )
+        else:
+            body_cost = make_complexity()
 
         return multiply(
             loop_cost,
@@ -139,7 +152,7 @@ def analyze_node(
 
     for child in node.children:
 
-        child_cost = analyze_node(child,function_table)
+        child_cost = analyze_node(child,function_table,current_function)
 
         result = add(
             result,

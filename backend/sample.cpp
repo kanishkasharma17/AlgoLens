@@ -3,5 +3,4 @@ void solve(int n){
 
     solve(n/2);
     solve(n/2);
-    solve(n/2);
 }
