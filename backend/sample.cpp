@@ -1,6 +1,3 @@
-void solve(int n){
-    if(n<=1) return;
+vector<int> cac(100);
 
-    solve(n/2);
-    solve(n/2);
-}
+cac[n]=5;

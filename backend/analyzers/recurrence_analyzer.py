@@ -5,7 +5,7 @@ from analyzers.recursion_analyzer import (
 )
 
 from complexity_builder import analyze_node
-
+from analyzers.memoization_detector import uses_memoization
 from analyzers.symbolic_analyzer import (      collect_divide_variables,
     get_call_divisor
 )
@@ -30,6 +30,8 @@ def extract_recurrence(function_node, function_name):
         function_node,
         function_name
     )
+    if uses_memoization(function_node):
+        return None
 
     divide = looks_like_divide_and_conquer(
         function_node,
@@ -44,7 +46,7 @@ def extract_recurrence(function_node, function_name):
 
 
     work = analyze_node(function_node,current_function=function_name)
-    print("WORK =",work)
+    
 
     symbols = collect_divide_variables(function_node)
 
